@@ -1,53 +1,93 @@
-const word = "javascript"; // Replace with any word you'd like
+const wordList = ["javascript", "hangman", "programming", "developer"]; // Word list
+let word = "";
+let guessed = [];
+let incorrect = 0;
+
+// Elements
 const wordContainer = document.getElementById("word-container");
 const guessedLetters = document.getElementById("guessed-letters");
 const hangman = document.getElementById("hangman");
 const guessInput = document.getElementById("guess-input");
 const guessButton = document.getElementById("guess-button");
+const resetButton = document.getElementById("reset-button");
 const message = document.getElementById("message");
 
-let guessed = [];
-let incorrect = 0;
-
-// Initialize the word display
-function initializeWord() {
-    wordContainer.innerHTML = word
-        .split("")
-        .map((letter) => (guessed.includes(letter) ? letter : "_"))
-        .join(" ");
+// Initialize game
+function startGame() {
+  word = wordList[Math.floor(Math.random() * wordList.length)];
+  guessed = [];
+  incorrect = 0;
+  wordContainer.innerHTML = word
+    .split("")
+    .map(() => "_")
+    .join(" ");
+  guessedLetters.innerHTML = "";
+  hangman.innerHTML = "";
+  message.textContent = "";
+  guessInput.value = "";
 }
 
-// Handle a new guess
-guessButton.addEventListener("click", () => {
-    const guess = guessInput.value.toLowerCase();
-    guessInput.value = ""; // Clear input
+// Update word display
+function updateWord() {
+  wordContainer.innerHTML = word
+    .split("")
+    .map((letter) => (guessed.includes(letter) ? letter : "_"))
+    .join(" ");
+}
 
-    if (!guess || guessed.includes(guess)) {
-        message.textContent = "Invalid or repeated guess.";
-        return;
-    }
+// Handle guesses
+function handleGuess() {
+  const guess = guessInput.value.toLowerCase();
+  guessInput.value = "";
 
-    guessed.push(guess);
+  if (!guess || guessed.includes(guess)) {
+    message.textContent = "Invalid or repeated guess!";
+    return;
+  }
 
-    if (word.includes(guess)) {
-        message.textContent = "Correct!";
-    } else {
-        message.textContent = "Incorrect!";
-        incorrect++;
-        drawHangman(); // Update hangman graphic
-    }
+  guessed.push(guess);
 
-    initializeWord();
+  if (word.includes(guess)) {
+    updateWord();
+    message.textContent = "Correct!";
+  } else {
+    incorrect++;
+    drawHangman();
+    guessedLetters.textContent += guess + " ";
+    message.textContent = "Incorrect!";
+  }
 
-    if (word.split("").every((letter) => guessed.includes(letter))) {
-        message.textContent = "You win!";
-    } else if (incorrect >= 6) {
-        message.textContent = "You lose! The word was " + word;
-    }
-});
+  checkGameStatus();
+}
 
-// Draw hangman parts based on incorrect guesses
+// Draw hangman graphics
 function drawHangman() {
-    // Add CSS manipulation or use div elements inside #hangman
+  const hangmanParts = [
+    `<div class="head"></div>`,
+    `<div class="body"></div>`,
+    `<div class="left-arm"></div>`,
+    `<div class="right-arm"></div>`,
+    `<div class="left-leg"></div>`,
+    `<div class="right-leg"></div>`,
+  ];
+
+  if (incorrect <= hangmanParts.length) {
+    hangman.innerHTML += hangmanParts[incorrect - 1];
+  }
 }
-initializeWord();
+
+// Check game status
+function checkGameStatus() {
+  if (word.split("").every((letter) => guessed.includes(letter))) {
+    message.textContent = "You win!";
+  } else if (incorrect >= 6) {
+    message.textContent = "You lose! The word was " + word;
+  }
+}
+
+// Event listeners
+guessButton.addEventListener("click", handleGuess);
+resetButton.addEventListener("click", startGame);
+
+// Start the game
+startGame();
