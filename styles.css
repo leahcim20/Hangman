@@ -1,0 +1,23 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+#hangman {
+    width: 200px;
+    height: 300px;
+    margin: 0 auto;
+    border: 2px solid #000;
+    position: relative;
+}
+
+#word-container span {
+    font-size: 2rem;
+    margin: 0 5px;
+    border-bottom: 2px solid #000;
+}
+
+#message {
+    color: red;
+    font-weight: bold;
+}
