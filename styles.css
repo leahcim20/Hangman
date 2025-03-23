@@ -1,34 +1,30 @@
 body {
-  font-family: Arial, sans-serif;
-  text-align: center;
-  background-color: #f0f0f0;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 20px;
 }
 
-#hangman {
-  width: 200px;
-  height: 300px;
-  margin: 0 auto;
-  position: relative;
-  border: 2px solid #000;
-  background-color: #fff;
+h1 {
+    color: #333;
 }
 
-#word-container span {
-  font-size: 2rem;
-  margin: 0 5px;
-  border-bottom: 2px solid #000;
+#wordDisplay {
+    font-size: 2rem;
+    letter-spacing: 0.2em;
+    margin: 20px;
 }
 
-#guessed-letters {
-  margin-top: 20px;
+#keyboard button {
+    margin: 5px;
+    padding: 10px;
+    font-size: 1rem;
+    cursor: pointer;
 }
 
 #message {
-  color: red;
-  font-weight: bold;
-}
-
-.guess-input {
-  margin-top: 10px;
+    font-size: 1.2rem;
+    color: red;
 }
 
