@@ -1,93 +1,59 @@
-const wordList = ["javascript", "hangman", "programming", "developer"]; // Word list
-let word = "";
-let guessed = [];
-let incorrect = 0;
+// Hangman Game Logic
 
-// Elements
-const wordContainer = document.getElementById("word-container");
-const guessedLetters = document.getElementById("guessed-letters");
-const hangman = document.getElementById("hangman");
-const guessInput = document.getElementById("guess-input");
-const guessButton = document.getElementById("guess-button");
-const resetButton = document.getElementById("reset-button");
+const words = ["javascript", "hangman", "github", "frontend", "developer"];
+let selectedWord = words[Math.floor(Math.random() * words.length)];
+let guessedWord = Array(selectedWord.length).fill("_");
+let wrongGuesses = 0;
+const maxGuesses = 6;
+
+const wordDisplay = document.getElementById("wordDisplay");
 const message = document.getElementById("message");
+const resetButton = document.getElementById("reset");
+const keyboard = document.getElementById("keyboard");
 
-// Initialize game
-function startGame() {
-  word = wordList[Math.floor(Math.random() * wordList.length)];
-  guessed = [];
-  incorrect = 0;
-  wordContainer.innerHTML = word
-    .split("")
-    .map(() => "_")
-    .join(" ");
-  guessedLetters.innerHTML = "";
-  hangman.innerHTML = "";
-  message.textContent = "";
-  guessInput.value = "";
+function displayWord() {
+    wordDisplay.textContent = guessedWord.join(" ");
 }
 
-// Update word display
-function updateWord() {
-  wordContainer.innerHTML = word
-    .split("")
-    .map((letter) => (guessed.includes(letter) ? letter : "_"))
-    .join(" ");
+function showKeyboard() {
+    keyboard.innerHTML = "";
+    "abcdefghijklmnopqrstuvwxyz".split("").forEach(letter => {
+        const button = document.createElement("button");
+        button.textContent = letter;
+        button.addEventListener("click", () => handleGuess(letter));
+        keyboard.appendChild(button);
+    });
 }
 
-// Handle guesses
-function handleGuess() {
-  const guess = guessInput.value.toLowerCase();
-  guessInput.value = "";
+function handleGuess(letter) {
+    if (selectedWord.includes(letter)) {
+        selectedWord.split("").forEach((char, index) => {
+            if (char === letter) guessedWord[index] = letter;
+        });
+    } else {
+        wrongGuesses++;
+        message.textContent = `Wrong guesses: ${wrongGuesses}`;
+    }
 
-  if (!guess || guessed.includes(guess)) {
-    message.textContent = "Invalid or repeated guess!";
-    return;
-  }
-
-  guessed.push(guess);
-
-  if (word.includes(guess)) {
-    updateWord();
-    message.textContent = "Correct!";
-  } else {
-    incorrect++;
-    drawHangman();
-    guessedLetters.textContent += guess + " ";
-    message.textContent = "Incorrect!";
-  }
-
-  checkGameStatus();
+    if (guessedWord.join("") === selectedWord) {
+        message.textContent = "You won!";
+        keyboard.innerHTML = "";
+    } else if (wrongGuesses >= maxGuesses) {
+        message.textContent = `Game over! The word was "${selectedWord}".`;
+        keyboard.innerHTML = "";
+    }
+    displayWord();
 }
 
-// Draw hangman graphics
-function drawHangman() {
-  const hangmanParts = [
-    `<div class="head"></div>`,
-    `<div class="body"></div>`,
-    `<div class="left-arm"></div>`,
-    `<div class="right-arm"></div>`,
-    `<div class="left-leg"></div>`,
-    `<div class="right-leg"></div>`,
-  ];
+resetButton.addEventListener("click", () => {
+    selectedWord = words[Math.floor(Math.random() * words.length)];
+    guessedWord = Array(selectedWord.length).fill("_");
+    wrongGuesses = 0;
+    message.textContent = "";
+    displayWord();
+    showKeyboard();
+});
 
-  if (incorrect <= hangmanParts.length) {
-    hangman.innerHTML += hangmanParts[incorrect - 1];
-  }
-}
+displayWord();
+showKeyboard();
 
-// Check game status
-function checkGameStatus() {
-  if (word.split("").every((letter) => guessed.includes(letter))) {
-    message.textContent = "You win!";
-  } else if (incorrect >= 6) {
-    message.textContent = "You lose! The word was " + word;
-  }
-}
-
-// Event listeners
-guessButton.addEventListener("click", handleGuess);
-resetButton.addEventListener("click", startGame);
-
-// Start the game
-startGame();
